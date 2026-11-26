@@ -1,4 +1,4 @@
-from src.models import Apartment, Bill, Parameters, Tenant, Transfer
+from src.models import Apartment, ApartmentSettlement, Bill, Parameters, Tenant, Transfer
 
 
 class Manager:
@@ -38,3 +38,16 @@ class Manager:
                 continue
             suma += rachunek.amount_pln
         return suma
+
+    def rozliczenie_mieszkania(self, apartment_key, year, month):
+        rachunki = self.get_apartment_costs(apartment_key, year, month)
+        if rachunki is None:
+            return None
+        return ApartmentSettlement(
+            apartment=apartment_key,
+            year=year,
+            month=month,
+            total_rent_pln=0.0,
+            total_bills_pln=rachunki,
+            total_due_pln=0.0 - rachunki
+        )
