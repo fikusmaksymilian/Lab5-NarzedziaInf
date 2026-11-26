@@ -1,4 +1,4 @@
-from src.models import Apartment, ApartmentSettlement, Bill, Parameters, Tenant, Transfer
+from src.models import Apartment, ApartmentSettlement, Bill, Parameters, Tenant, TenantSettlement, Transfer
 
 
 class Manager:
@@ -51,3 +51,23 @@ class Manager:
             total_bills_pln=rachunki,
             total_due_pln=0.0 - rachunki
         )
+
+    def rozliczenia_najemcow(self, rozliczenie):
+        najemcy = []
+        for klucz, najemca in self.tenants.items():
+            if najemca.apartment == rozliczenie.apartment:
+                najemcy.append(klucz)
+        wynik = []
+        for klucz in najemcy:
+            czesc = rozliczenie.total_bills_pln / len(najemcy)
+            wynik.append(TenantSettlement(
+                tenant=klucz,
+                apartment_settlement=rozliczenie.apartment,
+                month=rozliczenie.month,
+                year=rozliczenie.year,
+                rent_pln=0.0,
+                bills_pln=czesc,
+                total_due_pln=czesc,
+                balance_pln=0.0 - czesc
+            ))
+        return wynik
